@@ -17,49 +17,36 @@ document.addEventListener("click", function (e) {
         const itemParent = e.target.closest('.product');
         const itemId = itemParent.getAttribute('data-id');
         const itemValue = Number(e.target.previousElementSibling.children[1].textContent.trim());
-        const image = itemParent.children[1];
-        const productsOnCart = document.querySelectorAll(".cart__product"); 
+        const image = itemParent.children[1].src;
+        const productsInCart = document.querySelectorAll(".cart__product"); 
 
         const addCart = () => {
-            const productDiv = document.createElement("div");
-            productDiv.className = "cart__product";
-            productDiv.data_id = itemId;
-            
-            const titleDiv = document.createElement("img");
-            titleDiv.className = "cart__product-image";
-            titleDiv.src = image.src;
-            
-            const countDiv = document.createElement("div");
-            countDiv.className = "cart__product-count";
-            countDiv.textContent = itemValue;
+            const cartProducts = document.querySelector(".cart__products");
+          
+            cartProducts.insertAdjacentHTML('afterbegin', `
+                <div class="cart__product" data-id=${itemId}>
+                    <img class="cart__product-image" src=${image}>
+                    <div class="cart__product-count">${itemValue}</div>
+                </div>
+            `);
+         
+        };
+   
 
-
-            productDiv.appendChild(titleDiv);
-            productDiv.appendChild(countDiv);
-                
-            document.querySelector(".cart__products").appendChild(productDiv); 
-        }; 
-
-        if (itemValue > 0) {
-            if(productsOnCart.length>0){
-                const filtered = Array.from(productsOnCart).filter(node => node.data_id === itemId);
-                if(filtered.length > 0){
-                    filtered.forEach(prod => {
-                       valueProd = Number(prod.textContent) + Number(itemValue);
-                       prod.children[1].textContent = valueProd;
-                    });    
-                }else{
-                    addCart(); 
-                };
-
+    
+        if(productsInCart.length>0){
+            console.log(productsInCart);
+            const filtered = Array.from(productsInCart).find(node => node.dataset.id == itemId);
+            console.log(itemId);
+            if(filtered){
+                filtered.children[1].textContent = Number(filtered.textContent) + Number(itemValue);;
             }else{
-                addCart();
-            };    
-            
-            
+                addCart(); 
+            };
+        }else{
+            addCart();
         };    
-        
-        
+            
     };
        
 });    
